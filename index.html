@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f7f3eb" />
+    <meta name="description" content="一款可以自己動手、查看提示或自動完成的河內塔遊戲。" />
+    <title>河內塔 · 動動腦</title>
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <div class="brand" aria-label="河內塔遊戲">
+          <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span>河內塔 <span class="brand-dot">.</span></span>
+        </div>
+        <span class="header-note">一場關於耐心與規律的小挑戰</span>
+      </header>
+
+      <main>
+        <section class="intro" aria-labelledby="main-title">
+          <div class="eyebrow"><span class="eyebrow-line"></span> 經典益智遊戲 · TOWER OF HANOI</div>
+          <h1 id="main-title">一步一步，<br /><em>找到答案。</em></h1>
+          <p>把所有圓盤從左邊移到右邊。每次只能移動最上面的一片，而且大圓盤不能放在小圓盤上。</p>
+        </section>
+
+        <section id="setup-screen" class="setup-card" aria-labelledby="setup-title">
+          <div class="card-heading">
+            <span class="section-number">01 / 開始挑戰</span>
+            <h2 id="setup-title">先選擇圓盤數量</h2>
+            <p>柱子固定為三根；圓盤越多，挑戰越有趣。</p>
+          </div>
+          <div class="level-row" id="level-options" role="group" aria-label="選擇圓盤數量"></div>
+          <div class="setup-footer">
+            <p id="setup-detail">3 片圓盤，最少需要 7 步</p>
+            <button id="start-button" class="button button-primary" type="button">開始遊戲 <span aria-hidden="true">↗</span></button>
+          </div>
+          <div class="setup-art" aria-hidden="true">
+            <span class="art-disc art-disc-1"></span><span class="art-disc art-disc-2"></span><span class="art-disc art-disc-3"></span>
+          </div>
+        </section>
+
+        <section id="game-screen" class="game-screen" aria-labelledby="game-title" hidden>
+          <div class="game-topline">
+            <div>
+              <span class="section-number">02 / 動手解謎</span>
+              <h2 id="game-title">移動圓盤</h2>
+            </div>
+            <button id="change-level-button" class="text-button" type="button">← 更換難度</button>
+          </div>
+
+          <div class="stats" aria-label="遊戲進度">
+            <div class="stat"><span>目前步數</span><strong id="move-count">0</strong></div>
+            <div class="stat"><span>最少步數</span><strong id="minimum-count">7</strong></div>
+            <div class="stat"><span>圓盤數量</span><strong id="disk-count">3 <small>片</small></strong></div>
+          </div>
+
+          <div class="board-wrap">
+            <div class="board" id="board" aria-label="河內塔遊戲盤面">
+              <button class="peg" type="button" data-peg="0" aria-label="起點柱">
+                <span class="peg-visual"><span class="peg-rod"></span><span class="disk-stack"></span><span class="peg-base"></span></span>
+                <span class="peg-label"><b>A</b> 起點</span>
+              </button>
+              <button class="peg" type="button" data-peg="1" aria-label="中繼柱">
+                <span class="peg-visual"><span class="peg-rod"></span><span class="disk-stack"></span><span class="peg-base"></span></span>
+                <span class="peg-label"><b>B</b> 中繼</span>
+              </button>
+              <button class="peg" type="button" data-peg="2" aria-label="終點柱">
+                <span class="peg-visual"><span class="peg-rod"></span><span class="disk-stack"></span><span class="peg-base"></span></span>
+                <span class="peg-label"><b>C</b> 終點 <span aria-hidden="true">✦</span></span>
+              </button>
+            </div>
+            <div id="win-banner" class="win-banner" hidden>
+              <span class="win-star" aria-hidden="true">✦</span>
+              <h3>太棒了，你完成了！</h3>
+              <p id="win-detail"></p>
+              <button id="play-again-button" class="button button-primary" type="button">再玩一次 ↗</button>
+            </div>
+          </div>
+
+          <div class="game-controls">
+            <div class="control-buttons">
+              <button id="hint-button" class="button button-secondary" type="button"><span aria-hidden="true">✧</span> 提示下一步</button>
+              <button id="auto-button" class="button button-primary" type="button"><span aria-hidden="true">▶</span> 自動完成</button>
+              <button id="reset-button" class="button button-quiet" type="button">重新開始</button>
+            </div>
+            <p id="game-message" class="game-message" role="status" aria-live="polite">先點選有圓盤的柱子，再點選要放置的柱子。</p>
+          </div>
+        </section>
+
+        <aside class="rules" aria-label="遊戲規則">
+          <span class="rules-icon" aria-hidden="true">✳</span>
+          <div><strong>玩法很簡單</strong><p>每次只能移動一片圓盤，且只能拿最上面的一片。大圓盤永遠不能疊在小圓盤上。</p></div>
+          <span class="rules-formula">最少步數 = 2<sup>n</sup> − 1</span>
+        </aside>
+      </main>
+
+      <footer>慢慢來，每一步都算數。 <span>MADE FOR CURIOUS MINDS</span></footer>
+    </div>
+  </body>
+</html>
