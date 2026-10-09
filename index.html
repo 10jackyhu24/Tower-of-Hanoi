@@ -57,32 +57,40 @@
             <div class="stat"><span>圓盤數量</span><strong id="disk-count">3 <small>片</small></strong></div>
           </div>
 
-          <div class="board-wrap">
-            <div class="board" id="board" aria-label="河內塔遊戲盤面">
-              <button class="peg" type="button" data-peg="0" aria-label="起點柱">
-                <span class="peg-visual"><span class="peg-rod"></span><span class="disk-stack"></span><span class="peg-base"></span></span>
-                <span class="peg-label"><b>A</b> 起點</span>
-              </button>
-              <button class="peg" type="button" data-peg="1" aria-label="中繼柱">
-                <span class="peg-visual"><span class="peg-rod"></span><span class="disk-stack"></span><span class="peg-base"></span></span>
-                <span class="peg-label"><b>B</b> 中繼</span>
-              </button>
-              <button class="peg" type="button" data-peg="2" aria-label="終點柱">
-                <span class="peg-visual"><span class="peg-rod"></span><span class="disk-stack"></span><span class="peg-base"></span></span>
-                <span class="peg-label"><b>C</b> 終點 <span aria-hidden="true">✦</span></span>
-              </button>
+          <div class="game-play-area">
+            <div class="board-wrap">
+              <div class="board" id="board" aria-label="河內塔遊戲盤面">
+                <button class="peg" type="button" data-peg="0" aria-label="起點柱">
+                  <span class="peg-visual"><span class="peg-rod"></span><span class="disk-stack"></span><span class="peg-base"></span></span>
+                  <span class="peg-label"><b>A</b> 起點</span>
+                </button>
+                <button class="peg" type="button" data-peg="1" aria-label="中繼柱">
+                  <span class="peg-visual"><span class="peg-rod"></span><span class="disk-stack"></span><span class="peg-base"></span></span>
+                  <span class="peg-label"><b>B</b> 中繼</span>
+                </button>
+                <button class="peg" type="button" data-peg="2" aria-label="終點柱">
+                  <span class="peg-visual"><span class="peg-rod"></span><span class="disk-stack"></span><span class="peg-base"></span></span>
+                  <span class="peg-label"><b>C</b> 終點 <span aria-hidden="true">✦</span></span>
+                </button>
+              </div>
+              <div id="win-banner" class="win-banner" hidden>
+                <span class="win-star" aria-hidden="true">✦</span>
+                <h3>太棒了，你完成了！</h3>
+                <p id="win-detail"></p>
+                <button id="play-again-button" class="button button-primary" type="button">再玩一次 ↗</button>
+              </div>
             </div>
-            <div id="win-banner" class="win-banner" hidden>
-              <span class="win-star" aria-hidden="true">✦</span>
-              <h3>太棒了，你完成了！</h3>
-              <p id="win-detail"></p>
-              <button id="play-again-button" class="button button-primary" type="button">再玩一次 ↗</button>
-            </div>
+            <aside class="history-panel" aria-labelledby="history-title">
+              <div class="history-heading"><h3 id="history-title">移動紀錄</h3><span id="history-count">0 筆</span></div>
+              <p id="history-empty" class="history-empty">移動圓盤後，步驟會顯示在這裡。</p>
+              <ol id="history-list" class="history-list" aria-label="移動步驟"></ol>
+            </aside>
           </div>
 
           <div class="game-controls">
             <div class="control-buttons">
               <button id="hint-button" class="button button-secondary" type="button"><span aria-hidden="true">✧</span> 提示下一步</button>
+              <button id="step-button" class="button button-secondary" type="button"><span aria-hidden="true">↗</span> 逐步執行</button>
               <button id="auto-button" class="button button-primary" type="button"><span aria-hidden="true">▶</span> 自動完成</button>
               <button id="reset-button" class="button button-quiet" type="button">重新開始</button>
             </div>

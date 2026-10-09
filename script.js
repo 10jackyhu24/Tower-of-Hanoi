@@ -9,6 +9,7 @@
   let moves = 0;
   let autoTimer = null;
   let autoRunning = false;
+  let stepRunning = false;
   let activeAnimation = null;
   let hintMove = null;
 
@@ -33,9 +34,12 @@
     clearTimeout(autoTimer);
     autoTimer = null;
     autoRunning = false;
+    stepRunning = false;
     activeAnimation?.cancel();
     $('#auto-button').innerHTML = '<span aria-hidden="true">▶</span> 自動完成';
+    $('#auto-button').disabled = false;
     $('#hint-button').disabled = false;
+    $('#step-button').disabled = false;
     $('#reset-button').disabled = false;
     pegs.forEach((peg) => { peg.disabled = false; });
   }
@@ -46,9 +50,13 @@
       stacks[index].forEach((size) => {
         const disk = document.createElement('span');
         disk.className = 'disk';
+        const number = document.createElement('span');
+        number.className = 'disk-number';
+        number.textContent = String(size);
         disk.style.width = `${29 + size * (63 / diskCount)}%`;
         disk.style.background = colors[(size - 1) % colors.length];
         disk.setAttribute('aria-hidden', 'true');
+        disk.append(number);
         stack.append(disk);
       });
       peg.classList.toggle('selected', selected === index);
@@ -64,6 +72,9 @@
     selected = null;
     hintMove = null;
     moves = 0;
+    $('#history-list').replaceChildren();
+    $('#history-count').textContent = '0 筆';
+    $('#history-empty').hidden = false;
     $('#minimum-count').textContent = 2 ** diskCount - 1;
     $('#disk-count').innerHTML = `${diskCount} <small>片</small>`;
     $('#win-banner').hidden = true;
@@ -80,12 +91,32 @@
     $('#win-banner').hidden = false;
     say('挑戰成功！所有圓盤都移到終點了。');
   }
-  function moveDisk(from, to) {
+  function recordMove(size, from, to, mode) {
+    const item = document.createElement('li');
+    item.className = 'history-entry';
+    const order = document.createElement('span');
+    order.className = 'history-order';
+    order.textContent = String(moves).padStart(2, '0');
+    const detail = document.createElement('span');
+    detail.className = 'history-detail';
+    detail.textContent = `圓盤 ${size} · ${'ABC'[from]} → ${'ABC'[to]}`;
+    const source = document.createElement('span');
+    source.className = 'history-source';
+    source.textContent = mode;
+    item.append(order, detail, source);
+    const list = $('#history-list');
+    list.append(item);
+    list.scrollTop = list.scrollHeight;
+    $('#history-count').textContent = `${moves} 筆`;
+    $('#history-empty').hidden = true;
+  }
+  function moveDisk(from, to, mode = '手動') {
     if (from === to || !stacks[from].length) return false;
     const size = stacks[from].at(-1);
     if (stacks[to].length && stacks[to].at(-1) < size) return false;
     stacks[to].push(stacks[from].pop());
     moves++;
+    recordMove(size, from, to, mode);
     selected = null;
     hintMove = null;
     render();
@@ -163,7 +194,7 @@
   }
 
   pegs.forEach((peg) => peg.addEventListener('click', () => {
-    if (autoRunning || isSolved()) return;
+    if (autoRunning || stepRunning || isSolved()) return;
     const index = Number(peg.dataset.peg);
     hintMove = null;
     if (selected === null) {
@@ -182,7 +213,7 @@
   }));
 
   $('#hint-button').addEventListener('click', () => {
-    if (isSolved()) return;
+    if (autoRunning || stepRunning || isSolved()) return;
     const next = getSolution()[0];
     if (!next) return;
     selected = null;
@@ -190,15 +221,38 @@
     render();
     say(`提示：把 ${names[next.from]} 最上面的圓盤移到 ${names[next.to]}。`);
   });
+  $('#step-button').addEventListener('click', async () => {
+    if (autoRunning || stepRunning || isSolved()) return;
+    const next = getSolution()[0];
+    if (!next) return;
+    stepRunning = true;
+    selected = null;
+    hintMove = null;
+    render();
+    pegs.forEach((peg) => { peg.disabled = true; });
+    $('#hint-button').disabled = true;
+    $('#step-button').disabled = true;
+    $('#auto-button').disabled = true;
+    say(`逐步執行：${names[next.from]} → ${names[next.to]}。`);
+    const finished = await animateDisk(next.from, next.to);
+    if (!finished || !stepRunning) return;
+    stepRunning = false;
+    pegs.forEach((peg) => { peg.disabled = false; });
+    $('#hint-button').disabled = false;
+    $('#step-button').disabled = false;
+    $('#auto-button').disabled = false;
+    moveDisk(next.from, next.to, '逐步');
+  });
   $('#auto-button').addEventListener('click', () => {
     if (autoRunning) { stopAuto(); say('自動完成已暫停，你可以繼續自己移動。'); return; }
-    if (isSolved()) return;
+    if (stepRunning || isSolved()) return;
     autoRunning = true;
     selected = null;
     hintMove = null;
     render();
     pegs.forEach((peg) => { peg.disabled = true; });
     $('#hint-button').disabled = true;
+    $('#step-button').disabled = true;
     $('#reset-button').disabled = true;
     $('#auto-button').innerHTML = '<span aria-hidden="true">Ⅱ</span> 暫停動畫';
     say('正在自動完成，按「暫停動畫」可以繼續自己玩。');
@@ -208,7 +262,7 @@
       if (!autoRunning || step >= path.length) return;
       const {from, to} = path[step++];
       if (!await animateDisk(from, to) || !autoRunning) return;
-      moveDisk(from, to);
+      moveDisk(from, to, '自動');
       if (autoRunning) autoTimer = setTimeout(advance, 90);
     };
     autoTimer = setTimeout(advance, 180);
